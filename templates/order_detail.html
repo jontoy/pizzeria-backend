@@ -1,0 +1,61 @@
+{% extends 'base.html' %} {% block title %} Order #{{ order.id }}{% endblock %}
+{% block content %}
+
+<h1>Order #{{ order.id }} (${{order.calculateDiscountedTotal()}})</h1>
+
+<div class="row">
+  <div class="col-6">
+    <p><b>Created At: </b> {{ order.createdAt }}</p>
+
+    <h2>Items</h2>
+    <ul>
+      {% for item in order.items %}
+      <li>
+        <b>{{ item.name }} (${{item.price}})</b> X {{ item.quantity }} =
+        ${{item.price * item.quantity}}
+      </li>
+      {% endfor %}
+    </ul>
+    <hr />
+    <p><b>Subtotal: </b>${{order.total}}</p>
+    <p><b>Discount: </b> -{{order.calculateDiscount()*100}}%</p>
+    <hr />
+    <p><b>Total: </b>${{order.calculateDiscountedTotal()}}</p>
+  </div>
+
+  <div class="col-6">
+    <h1>Edit Order</h1>
+
+    <form class="form-inline" action="/{{ order.id }}/edit/" method="POST">
+      <div class="form-group">
+        <label class="my-1 mr-2" for="pizzaSelect">Pizza</label>
+        <select
+          class="custom-select my-1 mr-sm-2"
+          name="pizzaId"
+          id="pizzaSelect"
+        >
+          <option selected>Choose...</option>
+          {% for pizza in pizzas %}
+          <option value="{{pizza.id}}">{{pizza.name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group my-1 mr-1">
+        <label class="my-1 mr-2" for="quantityInput">Quantity</label>
+        <input
+          type="number"
+          name="quantity"
+          min="0"
+          step="1"
+          class="form-control"
+          id="quantityInput"
+        />
+      </div>
+
+      <button type="submit" class="btn btn-primary my-1">Update</button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
